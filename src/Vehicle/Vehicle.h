@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * (c) 2009-2020 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ *   (c) 2009-2016 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
@@ -376,6 +376,7 @@ public:
     Q_PROPERTY(Fact* goodPredHorizPosRelEstimate    READ goodPredHorizPosRelEstimate    CONSTANT)
     Q_PROPERTY(Fact* goodPredHorizPosAbsEstimate    READ goodPredHorizPosAbsEstimate    CONSTANT)
     Q_PROPERTY(Fact* gpsGlitch                      READ gpsGlitch                      CONSTANT)
+    Q_PROPERTY(Fact* pathDev                        READ pathDev                        CONSTANT)
     Q_PROPERTY(Fact* accelError                     READ accelError                     CONSTANT)
     Q_PROPERTY(Fact* velRatio                       READ velRatio                       CONSTANT)
     Q_PROPERTY(Fact* horizPosRatio                  READ horizPosRatio                  CONSTANT)
@@ -385,6 +386,7 @@ public:
     Q_PROPERTY(Fact* tasRatio                       READ tasRatio                       CONSTANT)
     Q_PROPERTY(Fact* horizPosAccuracy               READ horizPosAccuracy               CONSTANT)
     Q_PROPERTY(Fact* vertPosAccuracy                READ vertPosAccuracy                CONSTANT)
+
 
     Fact* goodAttitudeEstimate          (void) { return &_goodAttitudeEstimateFact; }
     Fact* goodHorizVelEstimate          (void) { return &_goodHorizVelEstimateFact; }
@@ -397,6 +399,7 @@ public:
     Fact* goodPredHorizPosRelEstimate   (void) { return &_goodPredHorizPosRelEstimateFact; }
     Fact* goodPredHorizPosAbsEstimate   (void) { return &_goodPredHorizPosAbsEstimateFact; }
     Fact* gpsGlitch                     (void) { return &_gpsGlitchFact; }
+    Fact* pathDev                       (void) { return &_pathDevFact; }
     Fact* accelError                    (void) { return &_accelErrorFact; }
     Fact* velRatio                      (void) { return &_velRatioFact; }
     Fact* horizPosRatio                 (void) { return &_horizPosRatioFact; }
@@ -406,6 +409,7 @@ public:
     Fact* tasRatio                      (void) { return &_tasRatioFact; }
     Fact* horizPosAccuracy              (void) { return &_horizPosAccuracyFact; }
     Fact* vertPosAccuracy               (void) { return &_vertPosAccuracyFact; }
+
 
     static const char* _goodAttitudeEstimateFactName;
     static const char* _goodHorizVelEstimateFactName;
@@ -418,6 +422,7 @@ public:
     static const char* _goodPredHorizPosRelEstimateFactName;
     static const char* _goodPredHorizPosAbsEstimateFactName;
     static const char* _gpsGlitchFactName;
+    static const char* _pathDevFactName;
     static const char* _accelErrorFactName;
     static const char* _velRatioFactName;
     static const char* _horizPosRatioFactName;
@@ -427,6 +432,7 @@ public:
     static const char* _tasRatioFactName;
     static const char* _horizPosAccuracyFactName;
     static const char* _vertPosAccuracyFactName;
+
 
 private:
     Fact _goodAttitudeEstimateFact;
@@ -440,6 +446,7 @@ private:
     Fact _goodPredHorizPosRelEstimateFact;
     Fact _goodPredHorizPosAbsEstimateFact;
     Fact _gpsGlitchFact;
+    Fact _pathDevFact;
     Fact _accelErrorFact;
     Fact _velRatioFact;
     Fact _horizPosRatioFact;
@@ -449,6 +456,7 @@ private:
     Fact _tasRatioFact;
     Fact _horizPosAccuracyFact;
     Fact _vertPosAccuracyFact;
+
 
 #if 0
     typedef enum ESTIMATOR_STATUS_FLAGS

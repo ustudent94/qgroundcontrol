@@ -1,0 +1,44 @@
+This file is to track changes made by the USU fixed wing drone team
+
+files edited:
+qgroundcontrol/src/Vehicle/Vehicle.cc
+qgroundcontrol/src/Vehicle/Vehicle.h
+qgroundcontrol/src/Vehicle/EstimatorFactGroup.json
+
+
+
+
+
+
+
+
+
+
+
+
+
+//json edits
+{
+    "name":                 "pathDev",
+    "shortDescription":     "Deviation From Path",
+    "type":                 "bool",
+    "default":              false
+}
+
+//alert qt interface rectangle
+import QtQuick.Controls 2.5
+
+                    Rectangle {
+                        width:  previewGrid.width
+                        height: 60
+                        radius: 3
+                        color:  palette.alertBackground
+                        border.color: palette.alertBorder
+                        border.width: 1
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        Label {
+                            text: "Vehicle has deviated from path"
+                            color: palette.alertText
+                            anchors.centerIn: parent
+                        }
+                    }

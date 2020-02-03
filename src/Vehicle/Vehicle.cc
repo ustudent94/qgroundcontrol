@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * (c) 2009-2020 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ *   (c) 2009-2016 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
@@ -65,7 +65,7 @@ const char* Vehicle::_joystickEnabledSettingsKey =  "JoystickEnabled";
 const char* Vehicle::_rollFactName =                "roll";
 const char* Vehicle::_pitchFactName =               "pitch";
 const char* Vehicle::_headingFactName =             "heading";
-const char* Vehicle::_rollRateFactName =             "rollRate";
+const char* Vehicle::_rollRateFactName =            "rollRate";
 const char* Vehicle::_pitchRateFactName =           "pitchRate";
 const char* Vehicle::_yawRateFactName =             "yawRate";
 const char* Vehicle::_airSpeedFactName =            "airSpeed";
@@ -985,6 +985,7 @@ void Vehicle::_handleEstimatorStatus(mavlink_message_t& message)
     _estimatorStatusFactGroup.goodPredHorizPosRelEstimate()->setRawValue(!!(estimatorStatus.flags & ESTIMATOR_PRED_POS_HORIZ_REL));
     _estimatorStatusFactGroup.goodPredHorizPosAbsEstimate()->setRawValue(!!(estimatorStatus.flags & ESTIMATOR_PRED_POS_HORIZ_ABS));
     _estimatorStatusFactGroup.gpsGlitch()->setRawValue(estimatorStatus.flags & ESTIMATOR_GPS_GLITCH ? true : false);
+    _estimatorStatusFactGroup.pathDev()->setRawValue(estimatorStatus.flags & ESTIMATOR_GPS_GLITCH ? true : false);
     _estimatorStatusFactGroup.accelError()->setRawValue(!!(estimatorStatus.flags & ESTIMATOR_ACCEL_ERROR));
     _estimatorStatusFactGroup.velRatio()->setRawValue(estimatorStatus.vel_ratio);
     _estimatorStatusFactGroup.horizPosRatio()->setRawValue(estimatorStatus.pos_horiz_ratio);
@@ -994,6 +995,7 @@ void Vehicle::_handleEstimatorStatus(mavlink_message_t& message)
     _estimatorStatusFactGroup.tasRatio()->setRawValue(estimatorStatus.tas_ratio);
     _estimatorStatusFactGroup.horizPosAccuracy()->setRawValue(estimatorStatus.pos_horiz_accuracy);
     _estimatorStatusFactGroup.vertPosAccuracy()->setRawValue(estimatorStatus.pos_vert_accuracy);
+    //TODO: START HERE look into estimatoStatus.flags and estimator_Accel_Error
 
 #if 0
     typedef enum ESTIMATOR_STATUS_FLAGS
@@ -4487,6 +4489,7 @@ const char* VehicleEstimatorStatusFactGroup::_goodConstPosModeEstimateFactName =
 const char* VehicleEstimatorStatusFactGroup::_goodPredHorizPosRelEstimateFactName = "goodPredHorizPosRelEstimate";
 const char* VehicleEstimatorStatusFactGroup::_goodPredHorizPosAbsEstimateFactName = "goodPredHorizPosAbsEstimate";
 const char* VehicleEstimatorStatusFactGroup::_gpsGlitchFactName =                   "gpsGlitch";
+const char* VehicleEstimatorStatusFactGroup::_pathDevFactName =                     "pathDev";
 const char* VehicleEstimatorStatusFactGroup::_accelErrorFactName =                  "accelError";
 const char* VehicleEstimatorStatusFactGroup::_velRatioFactName =                    "velRatio";
 const char* VehicleEstimatorStatusFactGroup::_horizPosRatioFactName =               "horizPosRatio";
@@ -4510,6 +4513,7 @@ VehicleEstimatorStatusFactGroup::VehicleEstimatorStatusFactGroup(QObject* parent
     , _goodPredHorizPosRelEstimateFact  (0, _goodPredHorizPosRelEstimateFactName,   FactMetaData::valueTypeBool)
     , _goodPredHorizPosAbsEstimateFact  (0, _goodPredHorizPosAbsEstimateFactName,   FactMetaData::valueTypeBool)
     , _gpsGlitchFact                    (0, _gpsGlitchFactName,                     FactMetaData::valueTypeBool)
+    , _pathDevFact                      (0, _pathDevFactName,                       FactMetaData::valueTypeBool)
     , _accelErrorFact                   (0, _accelErrorFactName,                    FactMetaData::valueTypeBool)
     , _velRatioFact                     (0, _velRatioFactName,                      FactMetaData::valueTypeFloat)
     , _horizPosRatioFact                (0, _horizPosRatioFactName,                 FactMetaData::valueTypeFloat)
@@ -4531,6 +4535,7 @@ VehicleEstimatorStatusFactGroup::VehicleEstimatorStatusFactGroup(QObject* parent
     _addFact(&_goodPredHorizPosRelEstimateFact, _goodPredHorizPosRelEstimateFactName);
     _addFact(&_goodPredHorizPosAbsEstimateFact, _goodPredHorizPosAbsEstimateFactName);
     _addFact(&_gpsGlitchFact,                   _gpsGlitchFactName);
+    _addFact(&_pathDevFact,                     _pathDevFactName);
     _addFact(&_accelErrorFact,                  _accelErrorFactName);
     _addFact(&_velRatioFact,                    _velRatioFactName);
     _addFact(&_horizPosRatioFact,               _horizPosRatioFactName);
@@ -4540,4 +4545,5 @@ VehicleEstimatorStatusFactGroup::VehicleEstimatorStatusFactGroup(QObject* parent
     _addFact(&_tasRatioFact,                    _tasRatioFactName);
     _addFact(&_horizPosAccuracyFact,            _horizPosAccuracyFactName);
     _addFact(&_vertPosAccuracyFact,             _vertPosAccuracyFactName);
+
 }

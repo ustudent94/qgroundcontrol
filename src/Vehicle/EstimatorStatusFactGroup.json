@@ -66,6 +66,12 @@
     "default":              false
 },
 {
+    "name":                 "pathDev",
+    "shortDescription":     "Deviation From Path",
+    "type":                 "bool",
+    "default":              false
+},
+{
     "name":                 "accelError",
     "shortDescription":     "Accel Error",
     "type":                 "bool",
