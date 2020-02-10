@@ -3971,6 +3971,9 @@ void Vehicle::_updatePathDeviation(void)
         if(dist > setDist){
             _pathDeviationFact.setRawValue(true);
         }
+        else{
+            _pathDeviationFact.setRawValue(false);
+        }
     }
     else{
         _pathDeviationFact.setRawValue(false);
