@@ -153,6 +153,7 @@ protected:
     QList<MissionItem*> _writeMissionItems;     ///< Set of mission items currently being written to vehicle
     int                 _currentMissionIndex;
     int                 _lastCurrentIndex;
+    int                 _previousMissionIndex;
 
 private:
     void _setTransactionInProgress(TransactionType_t type);

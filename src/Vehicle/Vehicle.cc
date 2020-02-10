@@ -13,6 +13,7 @@
 #include <QQuaternion>
 
 #include <Eigen/Eigen>
+#include <cmath>
 
 #include "Vehicle.h"
 #include "MAVLinkProtocol.h"
@@ -79,6 +80,7 @@ const char* Vehicle::_distanceToHomeFactName =      "distanceToHome";
 const char* Vehicle::_headingToNextWPFactName =     "headingToNextWP";
 const char* Vehicle::_headingToHomeFactName =       "headingToHome";
 const char* Vehicle::_distanceToGCSFactName =       "distanceToGCS";
+const char* Vehicle::_pathDeviationFactName =       "pathDeviation";
 const char* Vehicle::_hobbsFactName =               "hobbs";
 const char* Vehicle::_throttlePctFactName =         "throttlePct";
 
@@ -211,6 +213,7 @@ Vehicle::Vehicle(LinkInterface*             link,
     , _headingToNextWPFact  (0, _headingToNextWPFactName,   FactMetaData::valueTypeDouble)
     , _headingToHomeFact    (0, _headingToHomeFactName,     FactMetaData::valueTypeDouble)
     , _distanceToGCSFact    (0, _distanceToGCSFactName,     FactMetaData::valueTypeDouble)
+    , _pathDeviationFact    (0, _pathDeviationFactName,     FactMetaData::valueTypeBool)
     , _hobbsFact            (0, _hobbsFactName,             FactMetaData::valueTypeString)
     , _throttlePctFact      (0, _throttlePctFactName,       FactMetaData::valueTypeUint16)
     , _gpsFactGroup(this)
@@ -411,6 +414,7 @@ Vehicle::Vehicle(MAV_AUTOPILOT              firmwareType,
     , _headingToNextWPFact  (0, _headingToNextWPFactName,   FactMetaData::valueTypeDouble)
     , _headingToHomeFact    (0, _headingToHomeFactName,     FactMetaData::valueTypeDouble)
     , _distanceToGCSFact    (0, _distanceToGCSFactName,     FactMetaData::valueTypeDouble)
+    , _pathDeviationFact    (0, _pathDeviationFactName,     FactMetaData::valueTypeBool)
     , _hobbsFact            (0, _hobbsFactName,             FactMetaData::valueTypeString)
     , _throttlePctFact      (0, _throttlePctFactName,       FactMetaData::valueTypeUint16)
     , _gpsFactGroup(this)
@@ -440,6 +444,7 @@ void Vehicle::_commonInit(void)
 
     connect(this, &Vehicle::coordinateChanged,      this, &Vehicle::_updateDistanceHeadingToHome);
     connect(this, &Vehicle::coordinateChanged,      this, &Vehicle::_updateDistanceToGCS);
+    connect(this, &Vehicle::coordinateChanged,      this, &Vehicle::_updatePathDeviation);
     connect(this, &Vehicle::homePositionChanged,    this, &Vehicle::_updateDistanceHeadingToHome);
     connect(this, &Vehicle::hobbsMeterChanged,      this, &Vehicle::_updateHobbsMeter);
 
@@ -491,6 +496,7 @@ void Vehicle::_commonInit(void)
     _addFact(&_headingToNextWPFact,     _headingToNextWPFactName);
     _addFact(&_headingToHomeFact,       _headingToHomeFactName);
     _addFact(&_distanceToGCSFact,       _distanceToGCSFactName);
+    _addFact(&_pathDeviationFact,       _pathDeviationFactName);
     _addFact(&_throttlePctFact,         _throttlePctFactName);
 
     _hobbsFact.setRawValue(QVariant(QString("0000:00:00")));
@@ -985,7 +991,6 @@ void Vehicle::_handleEstimatorStatus(mavlink_message_t& message)
     _estimatorStatusFactGroup.goodPredHorizPosRelEstimate()->setRawValue(!!(estimatorStatus.flags & ESTIMATOR_PRED_POS_HORIZ_REL));
     _estimatorStatusFactGroup.goodPredHorizPosAbsEstimate()->setRawValue(!!(estimatorStatus.flags & ESTIMATOR_PRED_POS_HORIZ_ABS));
     _estimatorStatusFactGroup.gpsGlitch()->setRawValue(estimatorStatus.flags & ESTIMATOR_GPS_GLITCH ? true : false);
-    _estimatorStatusFactGroup.pathDev()->setRawValue(estimatorStatus.flags & ESTIMATOR_GPS_GLITCH ? true : false);
     _estimatorStatusFactGroup.accelError()->setRawValue(!!(estimatorStatus.flags & ESTIMATOR_ACCEL_ERROR));
     _estimatorStatusFactGroup.velRatio()->setRawValue(estimatorStatus.vel_ratio);
     _estimatorStatusFactGroup.horizPosRatio()->setRawValue(estimatorStatus.pos_horiz_ratio);
@@ -3937,6 +3942,41 @@ void Vehicle::_updateDistanceToGCS(void)
     }
 }
 
+void Vehicle::_updatePathDeviation(void)
+{
+    const int _currentIndex = _missionManager->currentIndex();
+    const int _previousIndex = _missionManager->previousIndex();
+    //todo: create a setting for the setDistance
+    //set to 6 ft.
+    const int setDist = 6;
+
+    MissionItem _currentItem;
+    MissionItem _previousItem;
+    QList<MissionItem*> llist = _missionManager->missionItems();
+
+    if(llist.size()>_currentIndex && _currentIndex!=-1
+       && llist[_currentIndex]->coordinate().longitude()!=0.0
+       && coordinate().distanceTo(llist[_currentIndex]->coordinate())>5.0 ){
+
+        //_headingToNextWPFact.setRawValue(coordinate().azimuthTo(llist[_currentIndex]->coordinate()));
+
+        //get use law of sines to get angles and turn into a distance between the current coordinate and the line between the current and pevious waypoints
+        double a = coordinate().distanceTo(llist[_previousIndex]->coordinate());
+        double b = coordinate().distanceTo(llist[_currentIndex]->coordinate());
+        double c = llist[_previousIndex]->coordinate().distanceTo(llist[_currentIndex]-> coordinate());
+        //law of cosines to get angle
+        double A = acos((b*b + c*c - a*a)/(2*b*c));
+        //get distance
+        double dist = sin(A) * b;
+        if(dist > setDist){
+            _pathDeviationFact.setRawValue(true);
+        }
+    }
+    else{
+        _pathDeviationFact.setRawValue(false);
+    }
+}
+
 void Vehicle::_updateHobbsMeter(void)
 {
     _hobbsFact.setRawValue(hobbsMeter());
@@ -4489,7 +4529,6 @@ const char* VehicleEstimatorStatusFactGroup::_goodConstPosModeEstimateFactName =
 const char* VehicleEstimatorStatusFactGroup::_goodPredHorizPosRelEstimateFactName = "goodPredHorizPosRelEstimate";
 const char* VehicleEstimatorStatusFactGroup::_goodPredHorizPosAbsEstimateFactName = "goodPredHorizPosAbsEstimate";
 const char* VehicleEstimatorStatusFactGroup::_gpsGlitchFactName =                   "gpsGlitch";
-const char* VehicleEstimatorStatusFactGroup::_pathDevFactName =                     "pathDev";
 const char* VehicleEstimatorStatusFactGroup::_accelErrorFactName =                  "accelError";
 const char* VehicleEstimatorStatusFactGroup::_velRatioFactName =                    "velRatio";
 const char* VehicleEstimatorStatusFactGroup::_horizPosRatioFactName =               "horizPosRatio";
@@ -4513,7 +4552,6 @@ VehicleEstimatorStatusFactGroup::VehicleEstimatorStatusFactGroup(QObject* parent
     , _goodPredHorizPosRelEstimateFact  (0, _goodPredHorizPosRelEstimateFactName,   FactMetaData::valueTypeBool)
     , _goodPredHorizPosAbsEstimateFact  (0, _goodPredHorizPosAbsEstimateFactName,   FactMetaData::valueTypeBool)
     , _gpsGlitchFact                    (0, _gpsGlitchFactName,                     FactMetaData::valueTypeBool)
-    , _pathDevFact                      (0, _pathDevFactName,                       FactMetaData::valueTypeBool)
     , _accelErrorFact                   (0, _accelErrorFactName,                    FactMetaData::valueTypeBool)
     , _velRatioFact                     (0, _velRatioFactName,                      FactMetaData::valueTypeFloat)
     , _horizPosRatioFact                (0, _horizPosRatioFactName,                 FactMetaData::valueTypeFloat)
@@ -4535,7 +4573,6 @@ VehicleEstimatorStatusFactGroup::VehicleEstimatorStatusFactGroup(QObject* parent
     _addFact(&_goodPredHorizPosRelEstimateFact, _goodPredHorizPosRelEstimateFactName);
     _addFact(&_goodPredHorizPosAbsEstimateFact, _goodPredHorizPosAbsEstimateFactName);
     _addFact(&_gpsGlitchFact,                   _gpsGlitchFactName);
-    _addFact(&_pathDevFact,                     _pathDevFactName);
     _addFact(&_accelErrorFact,                  _accelErrorFactName);
     _addFact(&_velRatioFact,                    _velRatioFactName);
     _addFact(&_horizPosRatioFact,               _horizPosRatioFactName);

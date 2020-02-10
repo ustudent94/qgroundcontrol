@@ -2,10 +2,13 @@ This file is to track changes made by the USU fixed wing drone team
 
 files edited:
 qgroundcontrol/src/Vehicle/Vehicle.cc
+	added function updatePathDeviation()
 qgroundcontrol/src/Vehicle/Vehicle.h
-qgroundcontrol/src/Vehicle/EstimatorFactGroup.json
-
-
+qgroundcontrol/src/Vehicle/VehicleFactGroup.json
+	added pathDeviation fact
+qgroundcontrol/src/MissionManager/MissionManager.h
+qgroundcontrol/src/MissionManager/MissionManager.cc
+	added previousIndex for waypoints
 
 
 
@@ -19,7 +22,7 @@ qgroundcontrol/src/Vehicle/EstimatorFactGroup.json
 
 //json edits
 {
-    "name":                 "pathDev",
+    "name":                 "pathDeviation",
     "shortDescription":     "Deviation From Path",
     "type":                 "bool",
     "default":              false

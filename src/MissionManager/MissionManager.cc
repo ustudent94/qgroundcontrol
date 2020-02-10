@@ -250,6 +250,7 @@ void MissionManager::_handleMissionCurrent(const mavlink_message_t& message)
         // We force the sequencing of HEARTBEAT following by MISSION_CURRENT by caching the possible _lastCurrentIndex update until
         // the next HEARTBEAT comes through.
         qCDebug(MissionManagerLog) << "_handleMissionCurrent caching _lastCurrentIndex for possible update:" << _currentMissionIndex;
+        _previousMissionIndex = _lastCurrentIndex;
         _cachedLastCurrentIndex = _currentMissionIndex;
     }
 }

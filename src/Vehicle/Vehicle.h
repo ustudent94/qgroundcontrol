@@ -376,7 +376,6 @@ public:
     Q_PROPERTY(Fact* goodPredHorizPosRelEstimate    READ goodPredHorizPosRelEstimate    CONSTANT)
     Q_PROPERTY(Fact* goodPredHorizPosAbsEstimate    READ goodPredHorizPosAbsEstimate    CONSTANT)
     Q_PROPERTY(Fact* gpsGlitch                      READ gpsGlitch                      CONSTANT)
-    Q_PROPERTY(Fact* pathDev                        READ pathDev                        CONSTANT)
     Q_PROPERTY(Fact* accelError                     READ accelError                     CONSTANT)
     Q_PROPERTY(Fact* velRatio                       READ velRatio                       CONSTANT)
     Q_PROPERTY(Fact* horizPosRatio                  READ horizPosRatio                  CONSTANT)
@@ -399,7 +398,6 @@ public:
     Fact* goodPredHorizPosRelEstimate   (void) { return &_goodPredHorizPosRelEstimateFact; }
     Fact* goodPredHorizPosAbsEstimate   (void) { return &_goodPredHorizPosAbsEstimateFact; }
     Fact* gpsGlitch                     (void) { return &_gpsGlitchFact; }
-    Fact* pathDev                       (void) { return &_pathDevFact; }
     Fact* accelError                    (void) { return &_accelErrorFact; }
     Fact* velRatio                      (void) { return &_velRatioFact; }
     Fact* horizPosRatio                 (void) { return &_horizPosRatioFact; }
@@ -422,7 +420,6 @@ public:
     static const char* _goodPredHorizPosRelEstimateFactName;
     static const char* _goodPredHorizPosAbsEstimateFactName;
     static const char* _gpsGlitchFactName;
-    static const char* _pathDevFactName;
     static const char* _accelErrorFactName;
     static const char* _velRatioFactName;
     static const char* _horizPosRatioFactName;
@@ -446,7 +443,6 @@ private:
     Fact _goodPredHorizPosRelEstimateFact;
     Fact _goodPredHorizPosAbsEstimateFact;
     Fact _gpsGlitchFact;
-    Fact _pathDevFact;
     Fact _accelErrorFact;
     Fact _velRatioFact;
     Fact _horizPosRatioFact;
@@ -682,6 +678,7 @@ public:
     Q_PROPERTY(Fact* headingToNextWP    READ headingToNextWP    CONSTANT)
     Q_PROPERTY(Fact* headingToHome      READ headingToHome      CONSTANT)
     Q_PROPERTY(Fact* distanceToGCS      READ distanceToGCS      CONSTANT)
+    Q_PROPERTY(Fact* pathDeviation      READ pathDeviation      CONSTANT)
     Q_PROPERTY(Fact* hobbs              READ hobbs              CONSTANT)
     Q_PROPERTY(Fact* throttlePct        READ throttlePct        CONSTANT)
 
@@ -995,6 +992,7 @@ public:
     Fact* headingToNextWP   (void) { return &_headingToNextWPFact; }
     Fact* headingToHome     (void) { return &_headingToHomeFact; }
     Fact* distanceToGCS     (void) { return &_distanceToGCSFact; }
+    Fact* pathDeviation    (void) { return &_pathDeviationFact; }
     Fact* hobbs             (void) { return &_hobbsFact; }
     Fact* throttlePct       (void) { return &_throttlePctFact; }
 
@@ -1269,6 +1267,7 @@ private slots:
     void _updateDistanceHeadingToHome(void);
     void _updateHeadingToNextWP(void);
     void _updateDistanceToGCS(void);
+    void _updatePathDeviation(void);
     void _updateHobbsMeter(void);
     void _vehicleParamLoaded(bool ready);
     void _sendQGCTimeToVehicle(void);
@@ -1565,6 +1564,7 @@ private:
     Fact _headingToNextWPFact;
     Fact _headingToHomeFact;
     Fact _distanceToGCSFact;
+    Fact _pathDeviationFact;
     Fact _hobbsFact;
     Fact _throttlePctFact;
 
@@ -1596,6 +1596,7 @@ private:
     static const char* _headingToNextWPFactName;
     static const char* _headingToHomeFactName;
     static const char* _distanceToGCSFactName;
+    static const char* _pathDeviationFactName;
     static const char* _hobbsFactName;
     static const char* _throttlePctFactName;
 

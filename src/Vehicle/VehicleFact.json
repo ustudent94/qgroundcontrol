@@ -112,6 +112,12 @@
     "units":            "deg"
 },
 {
+    "name":                 "pathDeviation",
+    "shortDescription":     "Deviation From Path",
+    "type":                 "bool",
+    "default":              false
+},
+{
     "name":             "flightTime",
     "shortDescription": "Flight Time",
     "type":             "elapsedSeconds",

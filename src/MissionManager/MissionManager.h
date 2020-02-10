@@ -26,6 +26,8 @@ public:
     /// Current mission item as reported by MISSION_CURRENT
     int currentIndex(void) const { return _currentMissionIndex; }
 
+    int previousIndex(void) const { return _previousMissionIndex; }
+
     /// Last current mission item reported while in Mission flight mode
     int lastCurrentIndex(void) const { return _lastCurrentIndex; }
 
