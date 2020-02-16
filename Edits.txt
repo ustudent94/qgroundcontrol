@@ -9,6 +9,10 @@ qgroundcontrol/src/Vehicle/VehicleFactGroup.json
 qgroundcontrol/src/MissionManager/MissionManager.h
 qgroundcontrol/src/MissionManager/MissionManager.cc
 	added previousIndex for waypoints
+qgroundcontrol\src\ui\preferences\GeneralSettings.qml
+qgroundcontrol\src\Settings\FlyView.SettingsGroup.json
+qgroundcontrol\src\Settings\FlyViewSettings.h
+qgroundcontrol\src\Settings\FlyViewSettings.cc
 
 
 

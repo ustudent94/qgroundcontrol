@@ -3946,6 +3946,7 @@ void Vehicle::_updatePathDeviation(void)
 {
     const int _currentIndex = _missionManager->currentIndex();
     const int _previousIndex = _missionManager->previousIndex();
+    double  currentAltitude = coordinate().altitude();
     double maxDeviation = _settingsManager->flyViewSettings()->pathDeviationDistance()->rawValue().toDouble();
 
     MissionItem _currentItem;
@@ -3962,9 +3963,19 @@ void Vehicle::_updatePathDeviation(void)
         double c = llist[_previousIndex]->coordinate().distanceTo(llist[_currentIndex]-> coordinate());
         //law of cosines to get angle
         double A = acos((b*b + c*c - a*a)/(2*b*c));
-        //get distance
-        double dist = sin(A) * b;
-        if(dist > maxDeviation){
+        //get horizontal distance
+        double horizontalDistance = sin(A) * b;
+
+        //get vertical distance
+        double nextAltitude = llist[_currentIndex]->coordinate().altitude();
+        double prevAltitude = llist[_previousIndex]->coordinate().altitude();
+
+        double midAltitude = abs(nextAltitude - prevAltitude)/2;
+
+        double verticalDistance = abs(midAltitude - currentAltitude);
+        double deviation = sqrt(horizontalDistance*horizontalDistance + verticalDistance*verticalDistance);
+
+        if(deviation > maxDeviation){
             _pathDeviationFact.setRawValue(true);
             qgcApp()->showMessage("The vehicle has deviated from it's loaded path ");
         }
