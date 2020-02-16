@@ -1,5 +1,12 @@
 [
 {
+    "name":             "pathDeviationDistance",
+    "shortDescription": "Minimum distance for consideration of path deviation",
+    "type":             "double",
+    "units":            "m",
+    "defaultValue":     6
+},
+{
     "name":             "guidedMinimumAltitude",
     "shortDescription": "Minimum altitude for guided actions altitude slider.",
     "type":             "double",

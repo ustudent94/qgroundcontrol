@@ -3946,9 +3946,7 @@ void Vehicle::_updatePathDeviation(void)
 {
     const int _currentIndex = _missionManager->currentIndex();
     const int _previousIndex = _missionManager->previousIndex();
-    //todo: create a setting for the setDistance
-    //set to 6 ft.
-    const int setDist = 6;
+    double maxDeviation = _settingsManager->flyViewSettings()->pathDeviationDistance()->rawValue().toDouble();
 
     MissionItem _currentItem;
     MissionItem _previousItem;
@@ -3958,8 +3956,6 @@ void Vehicle::_updatePathDeviation(void)
        && llist[_currentIndex]->coordinate().longitude()!=0.0
        && coordinate().distanceTo(llist[_currentIndex]->coordinate())>5.0 ){
 
-        //_headingToNextWPFact.setRawValue(coordinate().azimuthTo(llist[_currentIndex]->coordinate()));
-
         //get use law of sines to get angles and turn into a distance between the current coordinate and the line between the current and pevious waypoints
         double a = coordinate().distanceTo(llist[_previousIndex]->coordinate());
         double b = coordinate().distanceTo(llist[_currentIndex]->coordinate());
@@ -3968,8 +3964,9 @@ void Vehicle::_updatePathDeviation(void)
         double A = acos((b*b + c*c - a*a)/(2*b*c));
         //get distance
         double dist = sin(A) * b;
-        if(dist > setDist){
+        if(dist > maxDeviation){
             _pathDeviationFact.setRawValue(true);
+            qgcApp()->showMessage("The vehicle has deviated from it's loaded path ");
         }
         else{
             _pathDeviationFact.setRawValue(false);

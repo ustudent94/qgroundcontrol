@@ -540,10 +540,20 @@ Rectangle {
                             GridLayout {
                                 columns: 2
 
+                                property Fact _pathDeviationDistance:   QGroundControl.settingsManager.flyViewSettings.pathDeviationDistance
                                 property Fact _guidedMinimumAltitude:   QGroundControl.settingsManager.flyViewSettings.guidedMinimumAltitude
                                 property Fact _guidedMaximumAltitude:   QGroundControl.settingsManager.flyViewSettings.guidedMaximumAltitude
                                 property Fact _maxGoToLocationDistance: QGroundControl.settingsManager.flyViewSettings.maxGoToLocationDistance
 
+                                QGCLabel {
+                                    text:                   qsTr("Maximum Deviation From Path")
+                                    visible:                parent._pathDeviationDistance.visible
+                                }
+                                FactTextField {
+                                    Layout.preferredWidth:  _valueFieldWidth
+                                    visible:                parent._pathDeviationDistance.visible
+                                    fact:                   parent._pathDeviationDistance
+                                }
                                 QGCLabel {
                                     text:                   qsTr("Guided Minimum Altitude")
                                     visible:                parent._guidedMinimumAltitude.visible
